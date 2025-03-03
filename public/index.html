@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Controles de Enfermería</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="root"></div>
+  <div class="container">
+    <h1>Controles de Enfermería</h1>
+    
+    <!-- Pantalla de Login -->
+    <div id="loginScreen" class="form-container">
+      <h2>Iniciar Sesión</h2>
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="userCode">Código de Usuario*:</label>
+          <input type="text" id="userCode" name="userCode" required>
+        </div>
+        
+        <div class="form-actions">
+          <button type="submit" class="btn-submit">Ingresar</button>
+        </div>
+      </form>
+      <div id="loginMessage" class="message"></div>
+    </div>
+    
+    <!-- Pantalla de Selección de Cama/Paciente -->
+    <div id="bedSelectionScreen" class="form-container" style="display: none;">
+      <h2>Selección de Paciente</h2>
+      <div class="user-info">
+        <p>Usuario: <span id="currentUser"></span></p>
+      </div>
+      <form id="bedSelectionForm">
+        <div class="form-group">
+          <label for="patientBed">Seleccione Cama/Paciente*:</label>
+          <select id="patientBed" name="patientBed" required>
+            <option value="">Cargando pacientes...</option>
+          </select>
+        </div>
+        
+        <div class="form-actions">
+          <button type="submit" class="btn-submit">Seleccionar</button>
+          <button type="button" id="logoutBtn" class="btn-reset">Cerrar Sesión</button>
+        </div>
+      </form>
+    </div>
+    
+    <!-- Pantalla de Registro de Parámetros -->
+    <div id="nursingControlScreen" class="form-container" style="display: none;">
+      <h2>Registro de Controles</h2>
+      <div class="patient-info">
+        <p>Paciente: <span id="currentPatient"></span> | Cama: <span id="currentBed"></span></p>
+        <p>Usuario: <span id="nurseUser"></span></p>
+      </div>
+      <form id="nursingControlForm">
+        <div class="form-group">
+          <label for="controlDate">Fecha y Hora*:</label>
+          <input type="datetime-local" id="controlDate" name="controlDate" required>
+        </div>
+        
+        <!-- Signos Vitales -->
+        <div class="section-title">Signos Vitales</div>
+        
+        <div class="form-group blood-pressure-group">
+          <label for="systolicPressure">Presión Arterial (mmHg)*:</label>
+          <div class="blood-pressure-inputs">
+            <input type="number" id="systolicPressure" name="systolicPressure" min="0" max="300" placeholder="Sistólica" required>
+            <span class="separator">/</span>
+            <input type="number" id="diastolicPressure" name="diastolicPressure" min="0" max="200" placeholder="Diastólica" required>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="heartRate">Frecuencia Cardíaca (lpm)*:</label>
+          <input type="number" id="heartRate" name="heartRate" min="0" max="250" required>
+        </div>
+        
+        <div class="form-group respiratory-group">
+          <label for="respiratoryRate">Frecuencia Respiratoria (rpm):</label>
+          <div class="respiratory-inputs">
+            <input type="number" id="respiratoryRate" name="respiratoryRate" min="0" max="100">
+            <div class="checkbox-container">
+              <input type="checkbox" id="isRespSpontaneous" name="isRespSpontaneous">
+              <label for="isRespSpontaneous" class="checkbox-label">Espontánea</label>
+            </div>
+          </div>
+        </div>
+        
+        <div class="form-group temperature-group">
+          <label for="temperature">Temperatura (°C)*:</label>
+          <div class="temperature-inputs">
+            <input type="number" id="temperature" name="temperature" min="30" max="45" step="0.1" required>
+            <div class="checkbox-container">
+              <input type="checkbox" id="isCentralTemp" name="isCentralTemp">
+              <label for="isCentralTemp" class="checkbox-label">Central/Rectal</label>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Glucemia -->
+        <div class="section-title">Glucemia</div>
+        
+        <div class="form-group">
+          <label for="hemoglucotest">Hemoglucotest (mg/dl):</label>
+          <input type="number" id="hemoglucotest" name="hemoglucotest" min="0" max="600">
+        </div>
+        
+        <div class="form-group">
+          <label for="corrections" title="Unidades SC administradas desde el control anterior al actual o valor ajustado de BIC">Correcciones (UIsc o ml/h BIC):</label>
+          <input type="number" id="corrections" name="corrections" min="0" step="0.1">
+        </div>
+        
+        <!-- Ingresos y Egresos -->
+        <div class="section-title">Ingresos y Egresos</div>
+        
+        <div class="form-group">
+          <label for="diuresis" title="Volumen de diuresis contabilizada desde el control anterior al actual">Diuresis (ml):</label>
+          <input type="number" id="diuresis" name="diuresis" min="0">
+        </div>
+        
+        <div class="form-group">
+          <label for="enteralOutput" title="Débitos enterales desde el control anterior al actual">Débitos enterales (ml):</label>
+          <input type="number" id="enteralOutput" name="enteralOutput" min="0">
+        </div>
+        
+        <div class="form-group">
+          <label for="otherOutput" title="Otros débitos desde el control anterior al actual">Otros débitos (ml):</label>
+          <input type="number" id="otherOutput" name="otherOutput" min="0">
+        </div>
+        
+        <div class="form-group">
+          <label for="php" title="Volumen de PHP contabilizada desde el control anterior al actual incluyendo cargas (Na, K, Mg, etc)">PHP (ml):</label>
+          <input type="number" id="php" name="php" min="0">
+        </div>
+        
+        <div class="form-group">
+          <label for="expansions" title="Volumen de soluciones administradas contabilizadas desde el control anterior al actual">Expansiones (ml):</label>
+          <input type="number" id="expansions" name="expansions" min="0">
+        </div>
+        
+        <div class="form-group">
+          <label for="oralIntake" title="Ingesta Oral de líquidos">VO (ml):</label>
+          <input type="number" id="oralIntake" name="oralIntake" min="0">
+        </div>
+        
+        <div class="form-group">
+          <label for="enteralIntake" title="Ingesta enteral desde el control anterior al actual">Enteral (ml):</label>
+          <input type="number" id="enteralIntake" name="enteralIntake" min="0">
+        </div>
+        
+        <!-- Drogas IV -->
+        <div class="section-title">Drogas IV</div>
+        
+        <!-- AnalgoSedación -->
+        <div class="subsection-title">AnalgoSedación</div>
+        <div class="form-group">
+          <div id="analgoSedacionContainer" class="drugs-container">
+            <div class="drug-entry">
+              <select class="drug-name" aria-label="Nombre de la droga">
+                <option value="">Seleccionar droga</option>
+                <option value="Ninguna">Ninguna</option>
+                <option value="Midazolam">Midazolam</option>
+                <option value="Fentanilo">Fentanilo</option>
+                <option value="Propofol">Propofol</option>
+                <option value="Dexmedetomidina">Dexmedetomidina</option>
+                <option value="Ketamina">Ketamina</option>
+                <option value="Remifentanilo">Remifentanilo</option>
+                <option value="Morfina">Morfina</option>
+                <option value="Lorazepam">Lorazepam</option>
+                <option value="Clonidina">Clonidina</option>
+                <option value="Otro">Otro (especificar)</option>
+              </select>
+              <input type="text" class="drug-name-other" placeholder="Especificar otro" style="display: none;">
+              <input type="number" class="drug-value" placeholder="Valor (ml)" min="0" step="0.01" aria-label="Valor de la droga">
+              <button type="button" class="btn-icon add-drug">+</button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Titulables -->
+        <div class="subsection-title">Titulables</div>
+        <div class="form-group">
+          <div id="titulablesContainer" class="drugs-container">
+            <div class="drug-entry">
+              <select class="drug-name" aria-label="Nombre de la droga">
+                <option value="">Seleccionar droga</option>
+                <option value="Ninguna">Ninguna</option>
+                <!-- Vasopresores/Vasoactivos -->
+                <optgroup label="Vasopresores/Vasoactivos">
+                  <option value="Noradrenalina">Noradrenalina</option>
+                  <option value="Adrenalina">Adrenalina</option>
+                  <option value="Dopamina">Dopamina</option>
+                  <option value="Dobutamina">Dobutamina</option>
+                  <option value="Vasopresina">Vasopresina</option>
+                  <option value="Milrinona">Milrinona</option>
+                  <option value="Levosimendan">Levosimendan</option>
+                  <option value="Nitroglicerina">Nitroglicerina</option>
+                  <option value="Nitroprusiato">Nitroprusiato</option>
+                </optgroup>
+                <!-- Antiarrítmicos -->
+                <optgroup label="Antiarrítmicos">
+                  <option value="Amiodarona">Amiodarona</option>
+                  <option value="Lidocaína">Lidocaína</option>
+                  <option value="Esmolol">Esmolol</option>
+                  <option value="Diltiazem">Diltiazem</option>
+                </optgroup>
+                <!-- Diuréticos -->
+                <optgroup label="Diuréticos">
+                  <option value="Furosemida">Furosemida</option>
+                </optgroup>
+                <!-- Otros -->
+                <optgroup label="Otros">
+                  <option value="Insulina">Insulina</option>
+                  <option value="Heparina">Heparina</option>
+                  <option value="Bicarbonato">Bicarbonato</option>
+                  <option value="Labetalol">Labetalol</option>
+                  <option value="Otro">Otro (especificar)</option>
+                </optgroup>
+              </select>
+              <input type="text" class="drug-name-other" placeholder="Especificar otro" style="display: none;">
+              <input type="number" class="drug-value" placeholder="Valor (ml)" min="0" step="0.01" aria-label="Valor de la droga">
+              <button type="button" class="btn-icon add-drug">+</button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="observations">Observaciones:</label>
+          <textarea id="observations" name="observations" rows="3"></textarea>
+        </div>
+        
+        <div class="form-actions">
+          <button type="submit" class="btn-submit">Guardar Registro</button>
+          <button type="button" id="backToSelectionBtn" class="btn-secondary">Volver a Selección</button>
+          <button type="button" id="exitAppBtn" class="btn-reset">Salir de la App</button>
+        </div>
+      </form>
+      <div id="controlMessage" class="message"></div>
+    </div>
+    
+    <!-- Registros Recientes -->
+    <div id="recentControlsContainer" class="recent-entries" style="display: none;">
+      <h2>Registros Recientes</h2>
+      <div id="recentControls">
+        <p>No hay registros recientes para mostrar.</p>
+      </div>
+    </div>
+    
+    <!-- Registros del Usuario Actual -->
+    <div id="userControlsContainer" class="recent-entries" style="display: none;">
+      <h2>Sus Registros Confirmados</h2>
+      <div id="userControls">
+        <p>No hay registros recientes para mostrar.</p>
+      </div>
+    </div>
+    
+    <!-- Registros Pendientes de Confirmación -->
+    <div id="pendingControlsContainer" class="recent-entries pending-controls" style="display: none;">
+      <h2>Registros Pendientes de Confirmación</h2>
+      <div id="pendingControls">
+        <p>No hay controles pendientes.</p>
+      </div>
+    </div>
+  </div>
+  
+  <script type="module" src="/src/main.jsx"></script>
+</body>
+</html>
